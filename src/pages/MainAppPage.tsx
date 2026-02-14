@@ -8,20 +8,12 @@ import { useForm } from 'react-hook-form';
 import { io, Socket } from 'socket.io-client';
 import * as THREE from 'three';
 import { z } from 'zod';
+import type { components } from '../api/generated/schema';
 import { api } from '../lib/api-client';
 import { useAppStore } from '../store/app-store';
 
 type Profile = { sub: number; email: string };
-type ProductStatus = 'DRAFT' | 'LIVE' | 'ACTIVE' | 'OUT_OF_STOCK' | 'ARCHIVED';
-type Product = {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  imageUrl: string;
-  status: ProductStatus;
-  sellerId: number;
-};
+type Product = components['schemas']['ProductDto'];
 type Room = {
   id: string;
   title: string;
@@ -128,6 +120,7 @@ function JoinRoomPage({ roomId }: { roomId: string }) {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [message, setMessage] = useState('');
   const [orderNotice, setOrderNotice] = useState<string | null>(null);
+  const [joinErrorText, setJoinErrorText] = useState<string | null>(null);
 
   const randomViewerId = useMemo(() => Math.floor(Math.random() * 1000000) + 1, []);
   const token = useAppStore((s) => s.accessToken);
@@ -149,9 +142,16 @@ function JoinRoomPage({ roomId }: { roomId: string }) {
         })
       ).data,
     onSuccess: (data) => setViewerCount(data.room.viewerCount),
+    onError: (error) => {
+      const sourceError = error as AxiosError<{ message?: string | string[] }>;
+      const message = sourceError.response?.data?.message;
+      const parsedMessage = Array.isArray(message) ? message.join(', ') : message;
+      setJoinErrorText(parsedMessage ?? 'Không vào được room livestream.');
+    },
   });
 
   useEffect(() => {
+    setJoinErrorText(null);
     joinMutation.mutate();
   }, [roomId, viewerId]);
 
@@ -267,7 +267,7 @@ function JoinRoomPage({ roomId }: { roomId: string }) {
           <div className="mt-3 overflow-hidden rounded-xl bg-black">
             <video ref={remoteVideoRef} className="aspect-video w-full" autoPlay playsInline controls />
           </div>
-          {joinMutation.isError && <p className="mt-3 text-sm text-rose-600">Không vào được room hoặc room đã kết thúc.</p>}
+          {joinMutation.isError && <p className="mt-3 text-sm text-rose-600">{joinErrorText ?? 'Không vào được room hoặc room đã kết thúc.'}</p>}
         </section>
         <section className="space-y-4">
           <div className="rounded-2xl border bg-white p-4">
@@ -325,17 +325,21 @@ function HostRoomPage({ roomId }: { roomId: string }) {
   const profileQuery = useQuery({
     queryKey: ['host-profile'],
     queryFn: async () => (await api.get<Profile>('/auth/profile')).data,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity,
   });
   const productsQuery = useQuery({
     queryKey: ['host-products'],
     queryFn: async () => (await api.get<Product[]>('/products')).data,
     enabled: Boolean(profileQuery.data),
   });
+  const sellerId = profileQuery.data?.sub;
+
   useEffect(() => {
-    if (!profileQuery.data) {
+    if (!sellerId) {
       return;
     }
-    const sellerId = profileQuery.data.sub;
     let active = true;
 
     const ensurePeer = (viewerId: number) => {
@@ -434,7 +438,7 @@ function HostRoomPage({ roomId }: { roomId: string }) {
       peersRef.current.forEach((pc) => pc.close());
       peersRef.current.clear();
     };
-  }, [profileQuery.data, roomId]);
+  }, [sellerId, roomId]);
 
   const sendComment = () => {
     if (!message.trim() || !profileQuery.data || !socketRef.current) {
