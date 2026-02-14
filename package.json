@@ -9,17 +9,25 @@
     "codegen": "openapi-typescript http://localhost:3000/api-json -o src/api/generated/schema.ts"
   },
   "dependencies": {
+    "@chakra-ui/react": "2",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@hookform/resolvers": "^5.2.2",
+    "@react-three/drei": "^9.112.1",
+    "@react-three/fiber": "^8.17.10",
     "@tanstack/react-query": "^5.90.21",
     "axios": "^1.8.1",
+    "framer-motion": "^12.34.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.71.1",
     "socket.io-client": "^4.8.3",
+    "three": "^0.167.1",
     "zod": "^4.3.6",
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@rollup/rollup-darwin-arm64": "^4.57.1",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/react": "^18.3.13",
     "@types/react-dom": "^18.3.1",
