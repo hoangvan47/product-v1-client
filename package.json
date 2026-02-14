@@ -27,7 +27,6 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
-    "@rollup/rollup-darwin-arm64": "^4.57.1",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/react": "^18.3.13",
     "@types/react-dom": "^18.3.1",
