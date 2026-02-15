@@ -27,9 +27,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as THREE from 'three';
 import { z } from 'zod';
-import type { components } from '../api/generated/schema';
-import { api } from '../lib/api-client';
-import { useAppStore } from '../store/app-store';
+import type { components } from '../../../api-service/generated/schema';
+import { api } from '../../../shared/lib/api-client';
+import { useAppStore } from '../../../shared/store/app-store';
 
 declare global {
   interface Window {
