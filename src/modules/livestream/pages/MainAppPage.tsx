@@ -8,9 +8,9 @@ import { useForm } from 'react-hook-form';
 import { io, Socket } from 'socket.io-client';
 import * as THREE from 'three';
 import { z } from 'zod';
-import type { components } from '../api/generated/schema';
-import { api } from '../lib/api-client';
-import { useAppStore } from '../store/app-store';
+import type { components } from '../../../api-service/generated/schema';
+import { api } from '../../../shared/lib/api-client';
+import { useAppStore } from '../../../shared/store/app-store';
 
 type Profile = { sub: number; email: string };
 type Product = components['schemas']['ProductDto'];

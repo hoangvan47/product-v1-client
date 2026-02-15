@@ -11,26 +11,26 @@
 ## Setup
 ```bash
 cd /Users/admin/Desktop/run-with-codeX/frontend
-npm install
+yarn install
 ```
 
 ## Run
 ```bash
-npm run codegen
-npm run dev
+yarn codegen
+yarn dev
 ```
 
 Frontend URL: `http://localhost:5173`
 
-## Luồng chính
-1. Login/Register người bán.
-2. Tạo sản phẩm với validation (`react-hook-form` + `zod`).
-3. Tạo room livestream.
-4. Mở `host-room/:roomId` để phát live.
-5. Người xem mở `join-room/:roomId`.
-6. Chat realtime + share sản phẩm + mua trong live.
+## Main flow
+1. Seller login/register.
+2. Create products with validation (`react-hook-form` + `zod`).
+3. Create livestream rooms.
+4. Open `host-room/:roomId` to start streaming.
+5. Viewers open `join-room/:roomId`.
+6. Realtime chat + product sharing + live purchase.
 
 ## State management
-- Token auth, danh sách room lưu bằng Zustand tại `src/store/app-store.ts`.
+- Auth tokens and room list are managed with Zustand in `src/shared/store/app-store.ts`.
 
 # product-v1-client
